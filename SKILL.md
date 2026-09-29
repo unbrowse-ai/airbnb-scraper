@@ -10,7 +10,7 @@ description: Get Airbnb stays for any city or area as JSON with total and nightl
 - Search results only (no reviews text, calendars or host details). Up to 270 stays per location.
 
 ## Run
-Needs `UNBROWSE_API_KEY` (free at https://unbrowse.ai). From the repo root:
+Uses `UNBROWSE_API_KEY` when set (free at https://unbrowse.ai); without it, requests go straight to the site. From the repo root:
 
 ```bash
 node index.mjs Lisbon --checkin 2026-11-10 --checkout 2026-11-14 --adults 2 --max 100 > out.json

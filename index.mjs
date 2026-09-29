@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // Airbnb Scraper: stays in any city or region as structured JSON (price, rating, reviews, beds, coordinates, photos).
-// Each results page is requested from this machine through the public Unbrowse Airbnb search tool and parsed here.
+// Each results page is requested from this machine through the public Unbrowse Airbnb search tool (or directly,
+// without a key or when the tool is unavailable) and parsed here.
 import { fileURLToPath } from "node:url";
 import { RefusedError, cli, readPage } from "./lib/read-page.mjs";
 import { MAX_PAGES, PAGE_SIZE, cursorFor, domainSwitch, isoDay, parseSearch } from "./parse.mjs";
@@ -17,7 +18,11 @@ let domain = "www.airbnb.com"; // sticky: once Airbnb sends this network to a lo
 async function page(location, n, input, ctx, log) {
   for (let hop = 0; hop < 2; hop++) {
     try {
-      const p = await readPage(TOOLS[domain], { location, ...input, cursor: cursorFor(n) }, { hosts: ["airbnb.com", "airbnb.com.sg"] });
+      const params = { location, ...input, cursor: cursorFor(n) };
+      // The request the tool stands for: the search results page itself, requested directly when the tool cannot run.
+      const { location: _, ...query } = params;
+      const direct = { url: `https://${domain}/s/${encodeURIComponent(location)}/homes?${new URLSearchParams({ ...query, currency: "USD", locale: "en" })}` };
+      const p = await readPage(TOOLS[domain], params, { hosts: ["airbnb.com", "airbnb.com.sg"], direct });
       const r = parseSearch(p.body, ctx);
       if (!r) throw new Error(`Airbnb did not return search results for "${location}"`);
       return r;
@@ -104,6 +109,6 @@ Usage: node index.mjs <location>... [options]
   --max-price N --min-price N    per night, USD
   --min-bedrooms N --min-rating 4.8 --superhost --guest-favorite
 
-Needs UNBROWSE_API_KEY (free at https://unbrowse.ai).`,
+Uses UNBROWSE_API_KEY when set (free at https://unbrowse.ai); without it, requests go straight to the site.`,
   );
 }

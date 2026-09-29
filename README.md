@@ -2,13 +2,13 @@
 
 Scrape Airbnb search results for any city, region or neighbourhood into structured JSON: listing id and URL, name, room type, neighbourhood, total and per-night price in USD (with the crossed-out original price when there is a discount), number of nights, rating, review count, Guest Favourite and Superhost flags, bedrooms, beds, bed and bathroom lines, latitude and longitude, every photo, and payment notes ("Free cancellation", "Book early to save"). Give it dates and a guest count for real prices, or leave the dates out and Airbnb picks flexible ones. Up to 270 stays per search, 18 per page.
 
-Each results page is requested through a public [Unbrowse](https://unbrowse.ai) tool that knows Airbnb's search address. The request is sent from your machine, and the page's embedded results data (the same JSON the website renders from) is parsed locally. No browser, no page layout to break.
+Each results page is requested through a public [Unbrowse](https://unbrowse.ai) tool that knows Airbnb's search address. The request is sent from your machine, and the page's embedded results data (the same JSON the website renders from) is parsed locally. No browser, no page layout to break. Without an Unbrowse key, or when that tool is unavailable, the scraper sends the same request straight to the site and parses it the same way.
 
 ## Quick start
 
 ```bash
 git clone https://github.com/unbrowse-ai/airbnb-scraper && cd airbnb-scraper && npm install
-export UNBROWSE_API_KEY=ub_live_...        # free key: https://unbrowse.ai
+export UNBROWSE_API_KEY=ub_live_...        # optional; free key: https://unbrowse.ai
 
 node index.mjs Lisbon --checkin 2026-11-10 --checkout 2026-11-14 --adults 2 --max 100 > lisbon.json
 node index.mjs "Austin, TX" --max-price 200 --min-bedrooms 2 --guest-favorite > austin.json
@@ -80,7 +80,7 @@ const stays = await scrape("Lisbon", { checkIn: "2026-11-10", checkOut: "2026-11
 
 **Price filters at Airbnb's side?** Filters are applied to the results the search returns, so `--max 50 --max-price 100` reads pages until it has 50 matching stays or runs out.
 
-**Why a key?** The search is sent through Unbrowse's public Airbnb tool, which tells your machine which request to send. The key is free; the request leaves from your IP.
+**Do I need a key?** No. With a free [Unbrowse](https://unbrowse.ai) key, the scraper runs Unbrowse's public Airbnb tool first, which tells your machine which request to send. Without a key, or when a tool is unavailable, it sends the same request directly with a normal browser user agent (one `note:` line on stderr says so). Either way the request leaves from your IP, and your key is never sent to the site.
 
 ---
 
