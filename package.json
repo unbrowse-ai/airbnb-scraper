@@ -1,0 +1,12 @@
+{
+  "name": "airbnb-scraper",
+  "version": "0.1.0",
+  "description": "Airbnb scraper for Node.js: stays, prices, ratings and coordinates for any location as structured JSON, no headless browser or proxy pool. Built on the Unbrowse SDK.",
+  "license": "MIT",
+  "type": "module",
+  "bin": { "airbnb-scraper": "index.mjs" },
+  "engines": { "node": ">=18.17" },
+  "scripts": { "test": "node --test test.mjs" },
+  "keywords": ["airbnb-scraper", "airbnb", "vacation-rentals", "travel", "scraper", "web-scraping", "nodejs", "ai-agents", "unbrowse"],
+  "dependencies": { "@unbrowse/sdk": "^12.1.1" }
+}
